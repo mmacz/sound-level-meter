@@ -39,6 +39,9 @@ void SoundLevelMeter::reset(SLMConfig &cfg) {
   case FrequencyWeighting::C:
     mFreqWeighting.reset(new Filtering::CWeighting());
     break;
+  case FrequencyWeighting::Z:
+    mFreqWeighting.reset(nullptr);
+    break;
   default:
     throw std::invalid_argument(
         "SOUND LEVEL METER: Invalid Frequency Weighting");
@@ -49,13 +52,18 @@ void SoundLevelMeter::reset(SLMConfig &cfg) {
 
 MeterResults SoundLevelMeter::process(const float &sample) {
   MeterResults results;
-  float tmp = .0f;
-  mFreqWeighting->process(const_cast<float *>(&sample), &tmp, 1);
-  if (tmp > mPeak) {
-    mPeak = tmp;
+  float fWeighted = sample;
+  float tWeighted = .0f;
+  if (mFreqWeighting) {
+    mFreqWeighting->process(const_cast<float *>(&sample), &fWeighted, 1);
   }
-  mTimeWeighting.process(&tmp, &results.leq, 1);
-  results.peak = mPeak;
+  if (fWeighted > mPeak) {
+    mPeak = fWeighted;
+  }
+  mTimeWeighting.process(&fWeighted, &tWeighted, 1);
+
+  results.leq = GetDBLevel(tWeighted, mReferenceLevel);
+  results.peak = GetDBLevel(mPeak, mReferenceLevel);
   results.spl = GetDBLevel(sample, mReferenceLevel);
   return results;
 }

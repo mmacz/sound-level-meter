@@ -5,7 +5,7 @@
 
 namespace slm {
 
-enum class FrequencyWeighting { A, C };
+enum class FrequencyWeighting { A, C, Z };
 
 enum class TimeWeighting {
   FAST,
