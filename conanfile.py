@@ -22,7 +22,7 @@ class SoundLevelMeterConan(ConanFile):
     default_options = {
         "shared": False,
         "fPIC": True,
-        "fs": 48000,
+        "fs": 16000,
     }
 
     def __run_filtergen(self, fs=44100, output_dir = None):
