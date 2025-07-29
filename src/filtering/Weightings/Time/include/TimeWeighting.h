@@ -4,15 +4,8 @@
 namespace Filtering {
 class TimeWeighting : FilterInterface {
 public:
-  TimeWeighting() = delete;
-  TimeWeighting(unsigned int sampleRate, unsigned int mSec);
+  TimeWeighting(unsigned int mSec);
   ~TimeWeighting() = default;
-
-  TimeWeighting(const TimeWeighting &) = delete;
-  TimeWeighting(TimeWeighting &&) = delete;
-
-  TimeWeighting &operator=(const TimeWeighting &) = delete;
-  TimeWeighting &operator=(TimeWeighting &&) = delete;
 
   int process(float *inSamples, float *outSamples,
               unsigned int nSamples) override;

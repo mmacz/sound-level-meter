@@ -75,8 +75,8 @@ class SoundLevelMeterConan(ConanFile):
 
     def generate(self):
         tc = CMakeToolchain(self, generator="Ninja")
-        tc.variables["SOUND_LEVEL_METER_FS"] = self.options.get_safe("fs")
-        tc.variables["CMAKE_EXPORT_COMPILE_COMMANDS"] = True
+        tc.preprocessor_definitions["SOUND_LEVEL_METER_FS"] = self.options.get_safe("fs")
+        tc.cache_variables["CMAKE_EXPORT_COMPILE_COMMANDS"] = True
         tc.generate()
 
         deps = CMakeDeps(self)

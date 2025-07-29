@@ -3,8 +3,8 @@
 
 namespace Filtering {
 
-TimeWeighting::TimeWeighting(unsigned int sampleRate, unsigned int mSec)
-    : mSampleRate(sampleRate), mState(0.f) {
+TimeWeighting::TimeWeighting(unsigned int mSec)
+    : mSampleRate(SOUND_LEVEL_METER_FS), mState(0.f) {
   mTau = static_cast<float>(mSec) / 1000.f;
   mAlpha = mTau / (1.f / mSampleRate + mTau);
 }

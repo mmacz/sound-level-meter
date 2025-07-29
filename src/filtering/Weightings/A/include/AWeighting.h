@@ -1,7 +1,6 @@
 #pragma once
 #include "BiquadDFII.h"
 #include "FilterInterface.h"
-#include <array>
 
 namespace Filtering {
 class AWeighting : public FilterInterface {
