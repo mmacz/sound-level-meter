@@ -26,8 +26,9 @@ constexpr float GetDBLevel(const float &value, const float &referenceLevel) {
 }
 
 SoundLevelMeter::SoundLevelMeter(SLMConfig &cfg)
-    : mTimeWeighting(GetTimeWeightingTimeMs(cfg.tW)), mPeak(.0f),
-      mReferenceLevel(cfg.referenceLevel) {
+    : mTimeWeighting(GetTimeWeightingTimeMs(cfg.tW))
+    , mPeak(.0f)
+    , mReferenceLevel(cfg.referenceLevel) {
   reset(cfg);
 }
 
