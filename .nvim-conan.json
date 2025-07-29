@@ -1,0 +1,7 @@
+{
+  "build_policy": "missing",
+  "profile_host": "macos_sequoia_debug",
+  "profile_build": "default",
+  "version": "1.1.0",
+  "name": "nvim-conan"
+}

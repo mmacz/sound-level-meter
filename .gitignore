@@ -1,0 +1,9 @@
+.vscode/
+.cache/
+build/
+filter_venv/
+compile_commands.json
+CMakeUserPresets.json
+.nvim-conan.json
+.DS_Store
+

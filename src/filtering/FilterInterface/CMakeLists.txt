@@ -1,0 +1,2 @@
+add_library(FilterInterface INTERFACE)
+target_include_directories(FilterInterface INTERFACE include)
