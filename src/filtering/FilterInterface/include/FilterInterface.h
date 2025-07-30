@@ -4,7 +4,7 @@ namespace Filtering {
 
 class FilterInterface {
 public:
-  FilterInterface();
+  FilterInterface() = default;
   virtual ~FilterInterface() {};
 
   FilterInterface(const FilterInterface &) = delete;

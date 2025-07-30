@@ -27,10 +27,10 @@ struct SLMConfig {
 
 class SoundLevelMeter {
 public:
-  SoundLevelMeter(SLMConfig &cfg);
+  SoundLevelMeter(const SLMConfig &cfg);
   ~SoundLevelMeter() = default;
 
-  void reset(SLMConfig &cfg);
+  void reset(const SLMConfig &cfg);
   MeterResults process(const float &sample);
 
 private:

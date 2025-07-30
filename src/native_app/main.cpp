@@ -1,10 +1,14 @@
 #include <string>
 #include <iostream>
+#include <vector>
 
-#include "SoundLevelMeter.h"
 #include "cxxopts.hpp"
+#include "sndfile.hh"
+#include "SoundLevelMeter.h"
 
 using namespace slm;
+
+static constexpr size_t READ_BLOCK_SIZE = 512;
 
 struct CLIOpts {
   std::string filename;
@@ -13,12 +17,14 @@ struct CLIOpts {
   float referenceLevel;
 
   CLIOpts()
-      : filename(""), fw(slm::FrequencyWeighting::A),
-        tw(slm::TimeWeighting::SLOW), referenceLevel(94.f) {}
+      : filename("")
+      , fw(slm::FrequencyWeighting::A)
+      , tw(slm::TimeWeighting::SLOW)
+      , referenceLevel(2e-5) {}
 };
 
 
-FrequencyWeighting parseFw(const std::string &s) {
+static FrequencyWeighting parseFw(const std::string &s) {
   if (s == "a")
     return FrequencyWeighting::A;
   if (s == "c")
@@ -28,7 +34,7 @@ FrequencyWeighting parseFw(const std::string &s) {
   throw std::invalid_argument("Invalid frequency weighting: " + s);
 }
 
-TimeWeighting parseTw(const std::string &s) {
+static TimeWeighting parseTw(const std::string &s) {
   if (s == "fast")
     return TimeWeighting::FAST;
   if (s == "slow")
@@ -38,15 +44,15 @@ TimeWeighting parseTw(const std::string &s) {
   throw std::invalid_argument("Invalid time weighting: " + s);
 }
 
-CLIOpts parseOpts(int &argc, char **argv) {
+static CLIOpts parseOpts(int &argc, char **argv) {
   try {
     CLIOpts opts;
     cxxopts::Options options("slm", "Sound Level Meter Test Tool");
     options.add_options()
       ( "f,freq", "Frequency weighting (a/c/z)", cxxopts::value<std::string>()->default_value("a"))
-      ( "t,time", "Time weighting (fast/slow/impulse)", cxxopts::value<std::string>()->default_value("fast"))
+      ( "t,time", "Time weighting (fast/slow/impulse)", cxxopts::value<std::string>()->default_value("slow"))
       ( "input", "Input WAV file", cxxopts::value<std::string>())
-      ("r,reference", "Reference level in dB", cxxopts::value<float>()->default_value("94"))
+      ( "r,reference", "Reference level in sample value", cxxopts::value<float>()->default_value("2e-5"))
       ( "h,help", "Show help");
 
     options.parse_positional({"input"});
@@ -73,5 +79,44 @@ CLIOpts parseOpts(int &argc, char **argv) {
 
 int main(int argc, char **argv) {
   CLIOpts opts = parseOpts(argc, argv);
+
+  SLMConfig cfg;
+  cfg.referenceLevel = opts.referenceLevel;
+  cfg.fW = opts.fw;
+  cfg.tW = opts.tw;
+  SoundLevelMeter meter(cfg);
+
+  SndfileHandle file(opts.filename.c_str());
+  if (file.error()) {
+    std::cerr << "Failed to open file: " << opts.filename << "\n";
+    return 1;
+  }
+  if ((file.format() & SF_FORMAT_TYPEMASK) != SF_FORMAT_WAV) {
+    std::cerr << "Unsupported file format. Must be WAV.\n";
+    return 1;
+  }
+  std::cout << "Channels: " << file.channels() << "\n";
+  std::cout << "Sample rate: " << file.samplerate() << "\n";
+  std::cout << "Frames: " << file.frames() << "\n";
+
+  if (file.channels() != 1) {
+    std::cerr << "Input file must be Mono WAV file" << "\n";
+    return 1;
+  }
+
+  std::vector<float> buffer(READ_BLOCK_SIZE);
+  sf_count_t readFrames = 0;
+
+  MeterResults results;
+  while ((readFrames = file.readf(buffer.data(), READ_BLOCK_SIZE)) > 0) {
+    for (auto& sample : buffer) {
+      results = meter.process(sample);
+    }
+  }
+
+  std::cout << "Peak: " << results.peak << "\n";
+  std::cout << "Leq: " << results.leq << "\n";
+  std::cout << "SPL: " << results.spl << "\n";
+
   return 0;
 }

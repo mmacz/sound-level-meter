@@ -8,7 +8,7 @@
 
 namespace slm {
 
-uint32_t GetTimeWeightingTimeMs(TimeWeighting &tW) {
+uint32_t GetTimeWeightingTimeMs(TimeWeighting tW) {
   switch (tW) {
   case TimeWeighting::FAST:
     return 125;
@@ -25,15 +25,16 @@ constexpr float GetDBLevel(const float &value, const float &referenceLevel) {
   return 20.f * std::log10f(value / referenceLevel);
 }
 
-SoundLevelMeter::SoundLevelMeter(SLMConfig &cfg)
-    : mTimeWeighting(GetTimeWeightingTimeMs(cfg.tW))
+SoundLevelMeter::SoundLevelMeter(const SLMConfig &cfg)
+    : mTimeWeighting(GetTimeWeightingTimeMs((TimeWeighting)cfg.tW))
     , mPeak(.0f)
     , mReferenceLevel(cfg.referenceLevel) {
   reset(cfg);
 }
 
-void SoundLevelMeter::reset(SLMConfig &cfg) {
-  switch (cfg.fW) {
+void SoundLevelMeter::reset(const SLMConfig &cfg) {
+  SLMConfig _c{cfg};
+  switch (_c.fW) {
   case FrequencyWeighting::A:
     mFreqWeighting.reset(new Filtering::AWeighting());
     break;
@@ -47,8 +48,8 @@ void SoundLevelMeter::reset(SLMConfig &cfg) {
     throw std::invalid_argument(
         "SOUND LEVEL METER: Invalid Frequency Weighting");
   }
-  mTimeWeighting.set_msec(GetTimeWeightingTimeMs(cfg.tW));
-  mReferenceLevel = cfg.referenceLevel;
+  mTimeWeighting.set_msec(GetTimeWeightingTimeMs(_c.tW));
+  mReferenceLevel = _c.referenceLevel;
 }
 
 MeterResults SoundLevelMeter::process(const float &sample) {
