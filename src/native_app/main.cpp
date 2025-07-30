@@ -18,7 +18,7 @@ struct CLIOpts {
 };
 
 
-FrequencyWeighting parse_freq(const std::string &s) {
+FrequencyWeighting parseFw(const std::string &s) {
   if (s == "a")
     return FrequencyWeighting::A;
   if (s == "c")
@@ -28,7 +28,7 @@ FrequencyWeighting parse_freq(const std::string &s) {
   throw std::invalid_argument("Invalid frequency weighting: " + s);
 }
 
-TimeWeighting parse_time(const std::string &s) {
+TimeWeighting parseTw(const std::string &s) {
   if (s == "fast")
     return TimeWeighting::FAST;
   if (s == "slow")
@@ -61,8 +61,8 @@ CLIOpts parseOpts(int &argc, char **argv) {
     std::string twStr = result["time"].as<std::string>();
     opts.filename = result["input"].as<std::string>();
     opts.referenceLevel = result["reference"].as<float>();
-    opts.fw = parse_freq(fwStr);
-    opts.tw = parse_time(twStr);
+    opts.fw = parseFw(fwStr);
+    opts.tw = parseTw(twStr);
     return opts;
 
   } catch (const std::exception &e) {
