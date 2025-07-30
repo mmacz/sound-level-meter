@@ -72,11 +72,22 @@ class SoundLevelMeterConan(ConanFile):
     def build_requirements(self):
         self.tool_requires("cmake/[>=3.20 <4]")
         self.tool_requires("ninja/[>=1.10 <2]")
+        if self.settings.get_safe("arch") == "xtensa":
+            self.tool_requires("esp-idf/5.1.1")
+
+    def requirements(self):
+        if not self.settings.get_safe("arch") == "xtensa":
+            self.requires("libsndfile/1.2.2")
+            self.requires("cxxopts/3.1.1")
 
     def generate(self):
         tc = CMakeToolchain(self, generator="Ninja")
         tc.preprocessor_definitions["SOUND_LEVEL_METER_FS"] = self.options.get_safe("fs")
-        tc.cache_variables["CMAKE_EXPORT_COMPILE_COMMANDS"] = True
+        tc.cache_variables["CMAKE_EXPORT_COMPILE_COMMANDS"] = "ON"
+        if self.settings.get_safe("arch") == "xtensa":
+            tc.cache_variables["NATIVE_BUILD"] = "OFF"
+        else:
+            tc.cache_variables["NATIVE_BUILD"] = "ON"
         tc.generate()
 
         deps = CMakeDeps(self)

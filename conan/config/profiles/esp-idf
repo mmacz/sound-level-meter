@@ -1,0 +1,15 @@
+[settings]
+os=FreeRTOS
+arch=xtensa
+compiler=gcc
+compiler.version=11
+compiler.libc=none
+build_type=Release
+
+[buildenv]
+PATH=${sysroot}/tools/xtensa-esp32-elf/bin:${sysroot}/tools
+IDF_PATH=${sysroot}
+PYTHONPATH=${sysroot}/python_env/python_env/bin
+
+[conf]
+tools.cmake.cmaketoolchain:toolchain_file=toolchain-esp32.cmake
