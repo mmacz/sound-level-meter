@@ -1,8 +1,12 @@
 # Sound Level Meter (SLM) – DSP Library for Audio Level Analysis
+<p align="center">
+  <img src="assets/slm_logo.png" alt="SLM Logo" width="200"/>
+</p>
 
-> A modular C++ library for estimating sound pressure levels (SPL) from audio signals, 
-using standard-compliant frequency and time weighting filters. Designed for embedded use (e.g., ESP32) 
-and host-side audio analysis. Includes a minimal CLI tool for WAV testing.
+<h1 align="center">Sound Level Meter (SLM)</h1>
+<p align="center">
+  <em>Modular DSP library for audio level estimation, with A/C/Z filtering and SPL computation.</em>
+</p>
 
 ---
 
