@@ -46,8 +46,14 @@ static TimeWeighting parseTw(const std::string &s) {
 
 static CLIOpts parseOpts(int &argc, char **argv) {
   try {
+    std::string appName = argv[0];
+    #ifdef _WIN32
+      appName = appName.substr(appName.find_last_of("\\/") + 1);
+    #else
+      appName = appName.substr(appName.find_last_of("/\\") + 1);
+    #endif
     CLIOpts opts;
-    cxxopts::Options options("slm", "Sound Level Meter Test Tool");
+    cxxopts::Options options(appName.c_str(), "Sound Level Meter Test Tool");
     options.add_options()
       ( "f,freq", "Frequency weighting (a/c/z)", cxxopts::value<std::string>()->default_value("a"))
       ( "t,time", "Time weighting (fast/slow/impulse)", cxxopts::value<std::string>()->default_value("slow"))
