@@ -1,0 +1,20 @@
+tool: slm_reference
+args:
+  - name: help
+    flags: --help
+    description: Show help message and exit.
+    required: false
+    type: boolean
+  - name: freq_weighting
+    flags: --freq
+    required: true
+    description: Frequency weighting to use for the SLM reference.
+  - name: time_weighting
+    flags: --time
+    required: true
+    description: Time weighting to use for the SLM reference.
+  - name: reference_level
+    flags: --reference
+    required: true
+    description: Reference level for the SLM reference.
+

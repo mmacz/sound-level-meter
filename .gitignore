@@ -6,4 +6,7 @@ compile_commands.json
 CMakeUserPresets.json
 .nvim-conan.json
 .DS_Store
+*/**/.venv/
+*/**/*.egg-info/
+*/**/__pycache__/
 
