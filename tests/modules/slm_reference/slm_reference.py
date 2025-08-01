@@ -48,10 +48,8 @@ class SLMReferenceWrapper:
             out_line = process.stdout.readline() if process.stdout else ""
             err_line = process.stderr.readline() if process.stderr else ""
             if out_line:
-                print(out_line, end="")
                 stdout.append(out_line)
             if err_line:
-                print(err_line, end="", file=sys.stderr)
                 stderr.append(err_line)
             if out_line == "" and err_line == "" and process.poll() is not None:
                 break
