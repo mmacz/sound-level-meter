@@ -1,0 +1,78 @@
+name: Linux Build and Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Python + Conan
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install conan
+
+      - name: Configure and Build
+        run: |
+          conan profile detect --force
+          conan install . --output-folder=build --build=missing
+          conan build .
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-build
+          path: |
+            build/
+            .env
+          retention-days: 0
+          expires: 2h
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: linux-build
+          path: |
+            build/
+            .env
+
+      - name: Install uv
+        run: |
+          curl -Ls https://astral.sh/uv/install.sh | bash
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+          uv --version
+
+      - name: Load .env
+        run: |
+          set -a
+          source .env
+          set +a
+
+      - name: Run tests
+        run: |
+          cp ${BUILD_DIR}/bin/* tests/modules/slm_reference/bin/.
+          cd tests
+          uv venv .venv
+          source .venv/bin/activate
+          uv pip install -e .
+          pytest tests --junitxml=test-report.xml
+
+      - name: Upload pytest report
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-report
+          path: tests/pytest-report.xml
+          retention-days: 1
+

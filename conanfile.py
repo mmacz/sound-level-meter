@@ -93,6 +93,12 @@ class SoundLevelMeterConan(ConanFile):
         deps = CMakeDeps(self)
         deps.generate()
 
+        build_dir = self.build_folder
+        source_dir = self.source_folder
+        build_dir = os.path.relpath(build_dir, source_dir)
+        with open(os.path.join(self.source_folder, ".env"), "w") as f:
+            f.write(f"BUILD_DIR={build_dir}")
+
     def build(self):
         cmake = CMake(self);
         cmake.configure()
