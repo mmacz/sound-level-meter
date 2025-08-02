@@ -3,7 +3,7 @@
 #include "CWeighting.h"
 
 #include <cstdint>
-#include <math.h>
+#include <cmath>
 #include <stdexcept>
 
 namespace slm {
@@ -22,7 +22,7 @@ uint32_t GetTimeWeightingTimeMs(TimeWeighting tW) {
 };
 
 constexpr float GetDBLevel(const float &value, const float &referenceLevel) {
-  return 20.f * std::log10f(value / referenceLevel);
+  return 20.f * log10f(value / referenceLevel);
 }
 
 SoundLevelMeter::SoundLevelMeter(const SLMConfig &cfg)
