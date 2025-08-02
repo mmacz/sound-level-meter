@@ -29,13 +29,14 @@ jobs:
           set -a
           source .env
           set +a
+          echo "Build directory: ${BUILD_DIR}"
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: linux-build
           path: |
-            ${BUILD_DIR}/bin
+            ${BUILD_DIR}/bin/
             .env
           retention-days: 0
           expires: 2h

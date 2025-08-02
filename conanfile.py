@@ -1,9 +1,9 @@
 from conan import ConanFile
-from conan.tools.cmake import cmake_layout, CMake, CMakeToolchain, CMakeDeps
+from conan.tools.cmake import CMake, CMakeToolchain, CMakeDeps
+from conan.tools.layout import basic_layout
 import os
 import subprocess
 import sys
-import shutil
 
 class SoundLevelMeterConan(ConanFile):
     name = "sound-level-meter"
@@ -51,7 +51,17 @@ class SoundLevelMeterConan(ConanFile):
         ])
 
     def layout(self):
-        cmake_layout(self, src_folder=".")
+        basic_layout(self)
+        self.folders.source = "."
+        self.folders.build = os.path.join(
+            self.folders.source,
+            "build",
+            f"{self.settings.os}-{self.settings.arch}-{self.settings.compiler}-{self.settings.build_type}".lower(),
+        )
+        self.folders.generators = os.path.join(
+            self.folders.build,
+            "conan",
+        )
 
     def __symlink_compile_commands(self):
         cc = os.path.join(self.build_folder, "compile_commands.json")
@@ -94,8 +104,6 @@ class SoundLevelMeterConan(ConanFile):
         deps.generate()
 
         build_dir = self.build_folder
-        source_dir = self.source_folder
-        build_dir = os.path.relpath(build_dir, source_dir)
         with open(os.path.join(self.source_folder, ".env"), "w") as f:
             f.write(f"BUILD_DIR={build_dir}")
 
