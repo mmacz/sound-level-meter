@@ -104,7 +104,7 @@ class SoundLevelMeterConan(ConanFile):
         deps.generate()
 
         build_dir = self.build_folder
-        with open(os.path.join(self.source_folder, ".env"), "w") as f:
+        with open(os.path.join(self.source_folder, "env"), "w") as f:
             f.write(f"BUILD_DIR={build_dir}")
 
     def build(self):

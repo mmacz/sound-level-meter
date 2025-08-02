@@ -24,10 +24,10 @@ jobs:
           conan install . --output-folder=build --build=missing
           conan build .
 
-      - name: Load .env
+      - name: Load env
         run: |
           set -a
-          source .env
+          source env
           set +a
           echo "BUILD_DIR=$BUILD_DIR" >> $GITHUB_ENV
           echo "Build directory: $BUILD_DIR"
@@ -38,7 +38,7 @@ jobs:
           name: linux-build
           path: |
             ${{ env.BUILD_DIR }}/bin/
-            .env
+            env
           retention-days: 0
           expires: 2h
 
@@ -54,7 +54,7 @@ jobs:
           name: linux-build
           path: |
             build/
-            .env
+            env
 
       - name: Install uv
         run: |
@@ -62,10 +62,10 @@ jobs:
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
           uv --version
 
-      - name: Load .env
+      - name: Load env
         run: |
           set -a
-          source .env
+          source env
           set +a
           echo "BUILD_DIR=$BUILD_DIR" >> $GITHUB_ENV
           echo "Build directory: $BUILD_DIR"

@@ -9,6 +9,6 @@ CMakeUserPresets.json
 */**/.venv/
 */**/*.egg-info/
 */**/__pycache__/
-.env
+env
 
 
