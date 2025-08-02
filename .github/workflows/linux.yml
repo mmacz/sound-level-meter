@@ -29,14 +29,15 @@ jobs:
           set -a
           source .env
           set +a
-          echo "Build directory: ${BUILD_DIR}"
+          echo "BUILD_DIR=$BUILD_DIR" >> $GITHUB_ENV
+          echo "Build directory: $BUILD_DIR"
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: linux-build
           path: |
-            ${BUILD_DIR}/bin/
+            ${{ env.BUILD_DIR }}/bin/
             .env
           retention-days: 0
           expires: 2h
@@ -66,10 +67,12 @@ jobs:
           set -a
           source .env
           set +a
+          echo "BUILD_DIR=$BUILD_DIR" >> $GITHUB_ENV
+          echo "Build directory: $BUILD_DIR"
 
       - name: Run tests
         run: |
-          cp ${BUILD_DIR}/bin/* tests/modules/slm_reference/bin/.
+          cp ${{ env.BUILD_DIR }}/bin/* tests/modules/slm_reference/bin/.
           cd tests
           uv venv .venv
           source .venv/bin/activate
