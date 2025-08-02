@@ -24,12 +24,18 @@ jobs:
           conan install . --output-folder=build --build=missing
           conan build .
 
+      - name: Load .env
+        run: |
+          set -a
+          source .env
+          set +a
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: linux-build
           path: |
-            build/
+            ${BUILD_DIR}/bin
             .env
           retention-days: 0
           expires: 2h
