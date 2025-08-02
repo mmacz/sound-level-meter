@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build_and_test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,37 +24,13 @@ jobs:
           conan install . --output-folder=build --build=missing
           conan build .
 
-      - name: Load env
+      - name: Load build_env
         run: |
           set -a
           source build_env
           set +a
           echo "BUILD_DIR=$BUILD_DIR" >> $GITHUB_ENV
           echo "Build directory: $BUILD_DIR"
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-build
-          path: |
-            ${{ env.BUILD_DIR }}/bin/
-            build_env
-          retention-days: 0
-          expires: 2h
-
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: linux-build
-          path: |
-            build/
-            build_env
 
       - name: Install uv
         run: |
@@ -62,17 +38,9 @@ jobs:
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
           uv --version
 
-      - name: Load env
-        run: |
-          set -a
-          source build_env
-          set +a
-          echo "BUILD_DIR=$BUILD_DIR" >> $GITHUB_ENV
-          echo "Build directory: $BUILD_DIR"
-
       - name: Run tests
         run: |
-          cp ${{ env.BUILD_DIR }}/bin/* tests/modules/slm_reference/bin/.
+          cp ${{ env.BUILD_DIR }}/bin/* tests/modules/slm_reference/bin/
           cd tests
           uv venv .venv
           source .venv/bin/activate
@@ -83,6 +51,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: pytest-report
-          path: tests/pytest-report.xml
+          path: tests/test-report.xml
           retention-days: 1
 
